@@ -1,188 +1,110 @@
-# 欢迎来到 Lean 的 LEDE 源码仓库
+# LEDE (OpenWrt) for Orange Pi Zero 2
 
-为国产龙芯 LOONGSON SoC loongarch64 / 飞腾 Phytium 腾锐 D2000 系列架构添加支持
+[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Allwinner%20H616-orange.svg)](https://github.com/coolsnowwolf/lede)
+[![Release](https://img.shields.io/badge/release-v1.0-green.svg)](../../releases)
 
-I18N: [English](README_EN.md) | [简体中文](README.md) | [日本語](README_JA.md)
+> **🚀 核心亮点**：专为 **Orange Pi Zero 2** 定制，完美修复并开启 **5GHz Wi-Fi** 支持（AP/Client 模式），适合作为高性能迷你旁路由或便携热点使用。
 
-## 官方讨论群
+---
 
-如有技术问题需要讨论或者交流，欢迎加入以下群：
+## 📖 项目简介
 
-1. QQ 讨论群：Op 固件技术研究群，号码 891659613，加群链接：[点击加入](https://qm.qq.com/q/IMa6Yf2SgC "Op固件技术研究群")
-2. TG 讨论群：OP 编译官方大群，加群链接：[点击加入](https://t.me/JhKgAA6Hx1 "OP 编译官方大群")
+本项目基于 [coolsnowwolf/lede](https://github.com/coolsnowwolf/lede) 源码编译。针对 Orange Pi Zero 2 (全志 H616) 的硬件特性进行了深度优化，解决了原版源码在 H616 芯片上无线驱动不稳定的问题。
 
-## 软路由 ArmSoM Sige 系列介绍
+**为什么选择此固件？**
+市面上大多数 OPi Zero 2 固件仅能稳定运行 2.4G Wi-Fi，5G 频段常出现无法启动、搜索不到信号或吞吐量极低的情况。本固件集成了适配后的无线驱动，解锁了双频 Wi-Fi 的全部潜力。
 
-ArmSoM-Sige 系列：软路由、单板计算机、小型服务器与智能家居的全能之选。
+## ✨ 主要特性
 
-[商品介绍页面 - ArmSom 品牌店](https://shop518100695.taobao.com/)
+* **📶 完美无线支持**：
+    * **5GHz Wi-Fi**：支持开启 AP 热点（跑满 433Mbps 协商速率）或作为客户端连接主路由。
+    * **2.4GHz Wi-Fi**：信号稳定，兼容性好。
+* **⚡ 性能优化**：
+    * 开启全志 H616 硬件加速（Crypto Engine）。
+    * 优化 CPU 调度策略，降低待机温度。
+* **🛠 开箱即用**：
+    * 预装 Luci 管理界面。
+    * 默认开启 USB 扩展支持（支持 4G 网卡/U 盘/打印机）。
+    * 集成常用网络工具（如需更多插件请自行安装）。
 
-购买链接：
+## ⚙️ 硬件规格与默认配置
 
-[![sige1-zh](doc/sige-zh.jpg)](https://item.taobao.com/item.htm?id=721197662185)
+| 项目 | 详细信息 |
+| :--- | :--- |
+| **支持设备** | Orange Pi Zero 2 (512MB / 1GB RAM) |
+| **CPU 架构** | Cortex-A53 (Allwinner H616) |
+| **默认 IP** | `192.168.1.1` |
+| **默认用户** | `root` |
+| **默认密码** | `password` |
+| **默认 Wi-Fi** | OpenWrt_2.4G / OpenWrt_5G (无密码) |
 
-## 新一代 OpenWrt WIFI7 硬路由 CW Q3600 系列介绍
+---
 
-畅网Wi-Fi7 ，如7而至（2.5G网口），双系统自由切换
+## 📥 下载与安装
 
-[商品介绍页面 - 畅网 品牌店](https://www.changwang.cn/products.html?typeid=149)
+### 1. 获取固件
+请前往 [**Releases 页面**](../../releases) 下载最新的 `.img.gz` 固件包。
 
-购买链接：
+### 2. 烧录步骤
+1.  **解压**：下载后解压得到 `.img` 镜像文件。
+2.  **工具**：推荐使用 [BalenaEtcher](https://www.balena.io/etcher/) 或 [Rufus](https://rufus.ie/)。
+3.  **写入**：将 MicroSD 卡（建议 Class10, 8GB 以上）插入电脑，使用工具将镜像写入卡中。
 
-[![cw-zh](doc/cw-zh.jpg)](https://www.changwang.cn/product.html?id=29)
+### 3. 首次启动
+1.  插入 TF 卡，连接电源（建议 5V/3A Type-C）。
+2.  **耐心等待**：首次启动会自动扩容分区，约需 1-2 分钟。
+3.  当网口 LED 灯开始闪烁时，通过网线连接电脑，访问 `192.168.1.1`。
 
-## 注意
+---
 
-1. **不要用 root 用户进行编译**
-2. 国内用户编译前最好准备好梯子
-3. 默认登陆IP 192.168.1.1 密码 password
+## 📶 5G Wi-Fi 配置指南 (关键步骤)
 
-## 编译命令
+由于无线监管和驱动限制，为了确保 5G Wi-Fi 正常工作，请务必按照以下建议配置：
 
-1. 首先装好 Linux 系统，推荐 Debian 或 Ubuntu LTS 22/24
+1.  进入 **网络** -> **无线**。
+2.  点击 `Radio1` (通常是 5G 频段) 的 **修改**。
+3.  **设备配置** -> **高级设置**：
+    * **国家代码**：`US` (美国) 或 `CN` (中国)。*推荐选 US 以获得更好兼容性。*
+4.  **设备配置** -> **常规设置**：
+    * **信道**：**请勿选择“自动”！** 务必手动指定信道。
+    * 推荐信道：`36`, `40`, `44`, `48` (低频段) 或 `149`, `153`, `157`, `161` (高频段)。
+    * **频宽**：`80MHz`。
+5.  **保存并应用**。
 
-2. 安装编译依赖
+> ⚠️ **注意**：如果在“自动”信道下 5G 无法启动，通常是因为驱动误判了 DFS（动态频率选择）信道，手动锁定信道即可解决。
 
-   ```bash
-   sudo apt update -y
-   sudo apt full-upgrade -y
-   sudo apt install -y ack antlr3 asciidoc autoconf automake autopoint binutils bison build-essential \
-   bzip2 ccache clang cmake cpio curl device-tree-compiler flex gawk gcc-multilib g++-multilib gettext \
-   genisoimage git gperf haveged help2man intltool libc6-dev-i386 libelf-dev libfuse-dev libglib2.0-dev \
-   libgmp3-dev libltdl-dev libmpc-dev libmpfr-dev libncurses5-dev libncursesw5-dev libpython3-dev \
-   libreadline-dev libssl-dev libtool llvm lrzsz libnsl-dev ninja-build p7zip p7zip-full patch pkgconf \
-   python3 python3-pyelftools python3-setuptools qemu-utils rsync scons squashfs-tools subversion \
-   swig texinfo uglifyjs upx-ucl unzip vim wget xmlto xxd zlib1g-dev
-   ```
+---
 
-3. 下载源代码，更新 feeds 并选择配置
+## 🚀 旁路由 (Side Router) 快速设置
 
-   ```bash
-   git clone https://github.com/coolsnowwolf/lede
-   cd lede
-   ./scripts/feeds update -a
-   ./scripts/feeds install -a
-   make menuconfig
-   ```
+如果您打算将此设备作为旁路由（网关）使用，请参考以下最佳实践：
 
-4. 下载 dl 库，编译固件
-（-j 后面是线程数，第一次编译推荐用单线程）
+1.  **接口设置**：
+    * 进入 **网络** -> **接口** -> **LAN** -> **修改**。
+    * **IPv4 地址**：修改为与主路由同网段的静态 IP（例如主路由是 `1.1`，这里设为 `192.168.1.2`）。
+    * **IPv4 网关**：指向主路由 IP (`192.168.1.1`)。
+    * **DNS 服务器**：指向主路由 IP 或公共 DNS (`223.5.5.5`)。
+    * **DHCP 服务器**：勾选“忽略此接口”（由主路由分配 IP）或 开启“强制”模式（由 OPi 分配 IP）。
+2.  **防火墙设置 (至关重要)**：
+    * 进入 **网络** -> **防火墙**。
+    * 确保 **LAN 口** 的 **IP 动态伪装 (Masquerading)** 已**勾选**。
+    * 保存并应用。
+    * *解释：不开启此项，连接旁路由 Wi-Fi 的设备可能无法上网。*
 
-   ```bash
-   make download -j8
-   make V=s -j1
-   ```
+---
 
-本套代码保证肯定可以编译成功。里面包括了 R24 所有源代码，包括 IPK 的。
+## 🏗️ 编译指南 (Build from Source)
 
-你可以自由使用，但源码编译二次发布请注明我的 GitHub 仓库链接。谢谢合作！
-
-二次编译：
+如果你需要自行定制插件，请参考以下编译参数：
 
 ```bash
+# 1. Clone 源码
+git clone [https://github.com/coolsnowwolf/lede](https://github.com/coolsnowwolf/lede)
 cd lede
-git pull
-./scripts/feeds update -a
-./scripts/feeds install -a
-make defconfig
-make download -j8
-make V=s -j$(nproc)
-```
 
-如果需要重新配置：
+# 2. 更新 Feeds
+./scripts/feeds update -a && ./scripts/feeds install -a
 
-```bash
-rm -rf .config
+# 3. 菜单配置
 make menuconfig
-make V=s -j$(nproc)
-```
-
-编译完成后输出路径：bin/targets
-
-### 使用 WSL/WSL2 进行编译
-
-由于 WSL 的 PATH 中包含带有空格的 Windows 路径，有可能会导致编译失败，请在 `make` 前面加上：
-
-```bash
-PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-```
-
-由于默认情况下，装载到 WSL 发行版的 NTFS 格式的驱动器将不区分大小写，因此大概率在 WSL/WSL2 的编译检查中会返回以下错误：
-
-```txt
-Build dependency: OpenWrt can only be built on a case-sensitive filesystem
-```
-
-一个比较简洁的解决方法是，在 `git clone` 前先创建 Repository 目录，并为其启用大小写敏感：
-
-```powershell
-# 以管理员身份打开终端
-PS > fsutil.exe file setCaseSensitiveInfo <your_local_lede_path> enable
-# 将本项目 git clone 到开启了大小写敏感的目录 <your_local_lede_path> 中
-PS > git clone https://github.com/coolsnowwolf/lede <your_local_lede_path>
-```
-
-> 对已经 `git clone` 完成的项目目录执行 `fsutil.exe` 命令无法生效，大小写敏感只对新增的文件变更有效。
-
-### macOS 原生系统进行编译
-
-1. 在 AppStore 中安装 Xcode
-
-2. 安装 Homebrew：
-
-   ```bash
-   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-   ```
-
-3. 使用 Homebrew 安装工具链、依赖与基础软件包：
-
-   ```bash
-   brew unlink awk
-   brew install coreutils diffutils findutils gawk gnu-getopt gnu-tar grep make ncurses pkg-config wget quilt xz
-   brew install gcc@11
-   ```
-
-4. 然后输入以下命令，添加到系统环境变量中：
-
-   - intel 芯片的 mac
-
-   ```bash
-   echo 'export PATH="/usr/local/opt/coreutils/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/findutils/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/gnu-getopt/bin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/gnu-tar/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/grep/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/usr/local/opt/make/libexec/gnubin:$PATH"' >> ~/.bashrc
-   ```
-
-   - apple 芯片的 mac
-
-   ```zsh
-   echo 'export PATH="/opt/homebrew/opt/coreutils/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/findutils/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/gnu-getopt/bin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/gnu-tar/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/grep/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/gnu-sed/libexec/gnubin:$PATH"' >> ~/.bashrc
-   echo 'export PATH="/opt/homebrew/opt/make/libexec/gnubin:$PATH"' >> ~/.bashrc
-   ```
-
-5. 重新加载一下 shell 启动文件 `source ~/.bashrc`，然后输入 `bash` 进入 bash shell，就可以和 Linux 一样正常编译了
-
-## 特别提示
-
-1. 源代码中绝不含任何后门和可以监控或者劫持你的 HTTPS 的闭源软件， SSL 安全是互联网最后的壁垒，安全干净才是固件应该做到的。
-
-2. 想学习 OpenWrt 开发，但是摸不着门道？自学没毅力？基础太差？怕太难学不会？跟着佐大学 OpenWrt 开发入门培训班助你能学有所成
-报名地址：[点击报名](http://forgotfun.org/2018/04/openwrt-training-2018.html "报名")
-
-3. QCA IPQ60xx 开源仓库地址：<https://github.com/coolsnowwolf/openwrt-gl-ax1800>
-
-4. 存档版本仓库地址：<https://github.com/coolsnowwolf/openwrt>
-
-## 捐贈
-
-如果你觉得此项目对你有帮助，可以捐助我们，以鼓励项目能持续发展，更加完善
-
- ![star](doc/star.png)
