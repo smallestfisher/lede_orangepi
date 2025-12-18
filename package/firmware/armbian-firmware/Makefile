@@ -42,10 +42,10 @@ endef
 
 #添加AW859a(uwe5622)驱动
 define Package/uwe5622-firmware
-        $(Package/brcmfmac-firmware-default)
-        URL:=$(PKG_SOURCE_URL)
-        DEPENDS:=
-        TITLE:=Unisoc UWE5622 firmware(orangepi zero 2)
+		$(Package/brcmfmac-firmware-default)
+		URL:=$(PKG_SOURCE_URL)
+		DEPENDS:=
+		TITLE:=Unisoc UWE5622 firmware(orangepi zero 2)
 endef
 
 define Build/Compile
@@ -53,7 +53,7 @@ define Build/Compile
 endef
 
 define Package/brcmfmac-firmware-43752-sdio/install
-        $(INSTALL_DIR) $(1)/lib/firmware/brcm
+		$(INSTALL_DIR) $(1)/lib/firmware/brcm
         $(INSTALL_DATA) \
                 $(PKG_BUILD_DIR)/brcm/BCM4362A2.hcd \
                 $(1)/lib/firmware/brcm/BCM4362A2.hcd
