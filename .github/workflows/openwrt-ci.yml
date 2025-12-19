@@ -82,6 +82,10 @@ jobs:
     #     cd openwrt
     #     $GITHUB_WORKSPACE/$DIY_P1_SH
 
+    - name: bak config
+      run: |
+        cp .config config_bak #copy .config file
+
     - name: Update feeds
       run: ./scripts/feeds update -a
 
@@ -100,6 +104,7 @@ jobs:
       id: package
       run: |
         # cd openwrt
+        mv config_bak .config
         make defconfig
         make download -j8
         find dl -size -1024c -exec ls -l {} \;
